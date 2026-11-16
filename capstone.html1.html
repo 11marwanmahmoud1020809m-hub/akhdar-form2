@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0D9488">
+  <meta name="description" content="الراعي الذكي Smart Shepherd — برج تحكم الروبوت + سوق أخضر لبيع الإنتاج بالدرجات والمزادات والتتبّع.">
+  <title>الراعي الذكي | Smart Shepherd + سوق أخضر</title>
+  <style>
+    /* ========================================================
+       01) المتغيرات + الثيمات
+       ======================================================== */
+    :root {
+      --g1: #16A34A;
+      --g2: #22C55E;
+      --teal: #0D9488;
+      --sky: #0EA5E9;
+      --or: #F97316;
+      --pink: #EC4899;
+      --pur: #8B5CF6;
+      --yel: #FACC15;
+      --red: #EF4444;
+      --bg: #F0FDF4;
+      --cd: #FFFFFF;
+      --sf: #F8FAFC;
+      --ln: #E2E8F0;
+      --tx: #0F172A;
+      --tx2: #334155;
+      --mu: #64748B;
+      --sh: rgba(15, 23, 42, .08);
+      --side: 230px;
+    }
+    body[data-theme="dark"] {
+      --bg: #0B1220;
+      --cd: #111A2E;
+      --sf: #0F172A;
+      --ln: #24324A;
+      --tx: #E2E8F0;
+      --tx2: #CBD5E1;
+      --mu: #8CA3BF;
+      --sh: rgba(0, 0, 0, .45);
+    }
+    /* ========================================================
+       02) الأساسيات
+       ======================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--tx);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+    }
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+      color: var(--tx);
+    }
+    canvas {
+      display: block;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .sp {
+      margin-right: auto;
+    }
+    /* ========================================================
+       03) شاشة تسجيل الدخول
+       ======================================================== */
+    #loginWrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(150deg, #14532D, #0D9488 55%, #0E7490);
+    }
+    .lgbox {
+      background: var(--cd);
+      border-radius: 26px;
+      padding: 30px 26px;
+      width: min(420px, 100%);
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+    }
+    .lgbox .ic {
+      font-size: 52px;
+    }
+    .lgbox h1 {
+      font-size: 20px;
+      font-weight: 900;
+      margin: 6px 0 2px;
+    }
+    .lgbox small {
+      color: var(--mu);
+      font-weight: 800;
+      font-size: 10.5px;
+      letter-spacing: 1px;
+    }
+    .lgbox p {
+      font-size: 11.5px;
+      color: var(--tx2);
+      font-weight: 700;
+      margin: 10px 0 14px;
+    }
+    .lgbox .fd {
+      text-align: right;
+    }
+    /* ========================================================
+       04) الهيكل: توبار + سايدبار + محتوى
+       ======================================================== */
+    #app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(120deg, #14532D, #0D9488 60%, #0E7490);
+      color: #fff;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      box-shadow: 0 6px 20px rgba(13, 148, 136, .35);
+    }
+    .topbar .lg {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .topbar b {
+      font-size: 15px;
+      font-weight: 900;
+    }
+    .topbar small {
+      display: block;
+      color: #CCFBF1;
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .chip {
+      background: rgba(255, 255, 255, .16);
+      border: 1.5px solid rgba(255, 255, 255, .35);
+      border-radius: 14px;
+      padding: 3px 11px;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #ECFDF5;
+    }
+    .tbtn {
+      background: rgba(255, 255, 255, .14);
+      border: 1.5px solid rgba(255, 255, 255, .3);
+      border-radius: 12px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+      position: relative;
+    }
+    .tbtn .bdg {
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      background: var(--red);
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .shell {
+      display: flex;
+      flex: 1;
+    }
+    .side {
+      width: var(--side);
+      background: var(--cd);
+      border-left: 1px solid var(--ln);
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: sticky;
+      top: 62px;
+      height: calc(100vh - 62px);
+      overflow-y: auto;
+    }
+    .side button {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--tx2);
+      text-align: right;
+      transition: .15s;
+    }
+    .side button:hover {
+      background: var(--sf);
+    }
+    .side button.on {
+      background: linear-gradient(120deg, #0D9488, #14B8A6);
+      color: #fff;
+      box-shadow: 0 5px 14px rgba(13, 148, 136, .35);
+    }
+    .side button.on.mk {
+      background: linear-gradient(120deg, #EC4899, #F472B6);
+      box-shadow: 0 5px 14px rgba(236, 72, 153, .35);
+    }
+    .side .ver {
+      margin-top: auto;
+      font-size: 10px;
+      color: var(--mu);
+      font-weight: 800;
+      padding: 8px 10px;
+    }
+    .main {
+      flex: 1;
+      padding: 14px 16px 90px;
+      max-width: 1150px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .bnav {
+      position: fixed;
+      bottom: 0;
+      inset-inline: 0;
+      z-index: 60;
+      background: var(--cd);
+      border-top: 1px solid var(--ln);
+      display: none;
+      overflow-x: auto;
+      gap: 2px;
+      padding: 6px;
+    }
+    .bnav button {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: var(--mu);
+      padding: 5px 9px;
+      border-radius: 10px;
+    }
+    .bnav button.on {
+      color: var(--teal);
+      background: var(--sf);
+    }
+    /* ========================================================
+       05) البطاقات والمؤشرات
+       ======================================================== */
+    .cd {
+      background: var(--cd);
+      border: 1px solid var(--ln);
+      border-radius: 18px;
+      box-shadow: 0 4px 16px var(--sh);
+      padding: 16px;
+      margin-top: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cd::before {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      top: 0;
+      height: 4px;
+      background: var(--acc, linear-gradient(90deg, #0D9488, #2DD4BF));
+    }
+    .cd.a-g { --acc: linear-gradient(90deg, #16A34A, #A3E635); }
+    .cd.a-t { --acc: linear-gradient(90deg, #0D9488, #2DD4BF); }
+    .cd.a-s { --acc: linear-gradient(90deg, #0EA5E9, #38BDF8); }
+    .cd.a-o { --acc: linear-gradient(90deg, #F97316, #FBBF24); }
+    .cd.a-p { --acc: linear-gradient(90deg, #8B5CF6, #A78BFA); }
+    .cd.a-k { --acc: linear-gradient(90deg, #EC4899, #F472B6); }
+    .cd.a-r { --acc: linear-gradient(90deg, #EF4444, #F87171); }
+    .cd h3 {
+      font-size: 14px;
+      font-weight: 900;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .desc {
+      color: var(--mu);
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+    }
+    .kp {
+      background: var(--sf);
+      border: 2px solid var(--ln);
+      border-radius: 14px;
+      padding: 10px;
+      cursor: pointer;
+      transition: .15s;
+    }
+    .kp:hover {
+      transform: translateY(-2px);
+      border-color: var(--teal);
+    }
+    .kp .ic {
+      font-size: 18px;
+    }
+    .kp b {
+      display: block;
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--tx);
+    }
+    .kp span {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--mu);
+    }
+    .g2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .g3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .g4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    /* ========================================================
+       06) الأزرار والحقول
+       ======================================================== */
+    .bt {
+      border-radius: 12px;
+      padding: 9px 15px;
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 2px solid transparent;
+      transition: .15s;
+      text-decoration: none;
+    }
+    .bt:active {
+      transform: scale(.96);
+    }
+    .bt.gt {
+      background: linear-gradient(120deg, #0D9488, #14B8A6);
+      color: #fff;
+    }
+    .bt.gg {
+      background: linear-gradient(120deg, #16A34A, #65A30D);
+      color: #fff;
+    }
+    .bt.oo {
+      background: linear-gradient(120deg, #F97316, #F59E0B);
+      color: #fff;
+    }
+    .bt.pp {
+      background: linear-gradient(120deg, #8B5CF6, #6366F1);
+      color: #fff;
+    }
+    .bt.pk {
+      background: linear-gradient(120deg, #EC4899, #F472B6);
+      color: #fff;
+    }
+    .bt.ss {
+      background: linear-gradient(120deg, #0EA5E9, #38BDF8);
+      color: #fff;
+    }
+    .bt.rd {
+      background: linear-gradient(120deg, #EF4444, #F87171);
+      color: #fff;
+    }
+    .bt.gh {
+      background: var(--cd);
+      border-color: var(--ln);
+      color: var(--tx2);
+    }
+    .bt.sm {
+      padding: 6px 11px;
+      font-size: 11px;
+      border-radius: 10px;
+    }
+    .bt.xs {
+      padding: 4px 8px;
+      font-size: 10px;
+      border-radius: 8px;
+    }
+    .ac {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .fd {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--tx2);
+      margin-bottom: 9px;
+    }
+    .inp {
+      border: 2px solid var(--ln);
+      border-radius: 11px;
+      padding: 9px 12px;
+      font-size: 12.5px;
+      background: var(--cd);
+      width: 100%;
+    }
+    .inp:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(13, 148, 136, .15);
+    }
+    .chk {
+      width: 18px;
+      height: 18px;
+      accent-color: #0D9488;
+    }
+    /* ========================================================
+       07) الرقائق والملاحظات والجداول
+       ======================================================== */
+    .chip2 {
+      background: var(--cd);
+      border: 2px solid var(--ln);
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--tx2);
+    }
+    .chip2.red {
+      background: #FEF2F2;
+      border-color: #FCA5A5;
+      color: #991B1B;
+    }
+    .chip2.green {
+      background: #ECFDF5;
+      border-color: #6EE7B7;
+      color: #065F46;
+    }
+    .chip2.yel {
+      background: #FEF3C7;
+      border-color: #FCD34D;
+      color: #92400E;
+    }
+    .chip2.pur {
+      background: #F5F3FF;
+      border-color: #C4B5FD;
+      color: #6D28D9;
+    }
+    .note {
+      background: #FFFBEB;
+      border: 2px dashed #FCD34D;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #92400E;
+      margin-top: 10px;
+    }
+    .note.green {
+      background: #F0FDF4;
+      border-color: #86EFAC;
+      color: #166534;
+    }
+    .note.red {
+      background: #FEF2F2;
+      border-color: #FCA5A5;
+      color: #991B1B;
+    }
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+    .tbl th,
+    .tbl td {
+      border: 1.5px solid var(--ln);
+      padding: 6px 8px;
+      text-align: right;
+      font-weight: 700;
+    }
+    .tbl th {
+      background: var(--sf);
+      font-size: 10.5px;
+    }
+    /* ========================================================
+       08) الخريطة والشبكة
+       ======================================================== */
+    .mapgrid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 4px;
+      margin-top: 10px;
+    }
+    .cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      background: #86EFAC;
+      cursor: pointer;
+      transition: .12s;
+      border: 1.5px solid transparent;
+    }
+    .cell:hover {
+      transform: scale(1.12);
+      border-color: #0F172A;
+    }
+    .cell.warn {
+      background: #FDE047;
+    }
+    .cell.inf {
+      background: #F87171;
+    }
+    .cell.treat {
+      background: #60A5FA;
+    }
+    .cell.dry {
+      background: #FDBA74;
+    }
+    .cell.hot {
+      background: #F97316;
+    }
+    /* ========================================================
+       09) الكاميرا والسجل
+       ======================================================== */
+    .cambox {
+      background: #0B1220;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      height: 220px;
+    }
+    .cambox .live {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--red);
+      color: #fff;
+      border-radius: 8px;
+      padding: 2px 9px;
+      font-size: 10px;
+      font-weight: 900;
+      animation: blink 1.4s infinite;
+    }
+    @keyframes blink {
+      50% {
+        opacity: .4;
+      }
+    }
+    .logbox {
+      background: #0B1220;
+      border-radius: 12px;
+      padding: 10px;
+      height: 180px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 10.5px;
+      direction: ltr;
+      text-align: left;
+      color: #A7F3D0;
+    }
+    .logbox .w {
+      color: #FDE047;
+    }
+    .logbox .e {
+      color: #FCA5A5;
+    }
+    .logbox .c {
+      color: #93C5FD;
+    }
+    /* ========================================================
+       10) الرسوم
+       ======================================================== */
+    .chartbox {
+      width: 100%;
+      background: var(--sf);
+      border: 2px solid var(--ln);
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+    /* ========================================================
+       11) البطاقات الصغيرة (مهام/تنبيهات/اكتشافات)
+       ======================================================== */
+    .item {
+      border: 2px solid var(--ln);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: var(--sf);
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .item .tt {
+      font-weight: 800;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .item .mm {
+      color: var(--mu);
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    /* ========================================================
+       12) السوق والبيع (الجديد)
+       ======================================================== */
+    .mkt-hero {
+      background: linear-gradient(140deg, #831843, #EC4899 45%, #F97316);
+      border-radius: 18px;
+      color: #fff;
+      padding: 18px;
+      margin-top: 14px;
+    }
+    .mkt-hero h2 {
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .mkt-hero p {
+      font-size: 12px;
+      color: #FCE7F3;
+      font-weight: 700;
+    }
+    .lcard {
+      border: 2px solid var(--ln);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--cd);
+      display: flex;
+      flex-direction: column;
+    }
+    .lcard .lim {
+      height: 110px;
+      background: var(--sf);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+    .lcard .lb {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      font-size: 11.5px;
+    }
+    .shopgrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .gch {
+      border-radius: 10px;
+      padding: 2px 9px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .gch.g1 {
+      background: linear-gradient(120deg, #FACC15, #F59E0B);
+    }
+    .gch.g2 {
+      background: linear-gradient(120deg, #94A3B8, #64748B);
+    }
+    .gch.g3 {
+      background: linear-gradient(120deg, #B45309, #92400E);
+    }
+    .gch.gx {
+      background: linear-gradient(120deg, #22C55E, #0D9488);
+    }
+    .pbar {
+      height: 11px;
+      background: var(--ln);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 6px 0;
+    }
+    .pbar i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #EC4899, #F472B6);
+    }
+    .badge {
+      display: inline-block;
+      border-radius: 14px;
+      padding: 4px 14px;
+      font-weight: 900;
+      font-size: 12px;
+      color: #fff;
+    }
+    /* ========================================================
+       13) المساعد الذكي
+       ======================================================== */
+    .chatbox {
+      background: var(--sf);
+      border: 2px solid var(--ln);
+      border-radius: 14px;
+      height: 260px;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .msg {
+      max-width: 80%;
+      border-radius: 14px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .msg.bot {
+      background: var(--cd);
+      border: 1.5px solid var(--ln);
+      align-self: flex-start;
+    }
+    .msg.user {
+      background: linear-gradient(120deg, #0D9488, #14B8A6);
+      color: #fff;
+      align-self: flex-end;
+    }
+    /* ========================================================
+       14) السوق العام (Overlay للمشتري)
+       ======================================================== */
+    #pubWrap {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+    .pub-hero {
+      background: linear-gradient(140deg, #0D9488, #16A34A 45%, #65A30D);
+      color: #fff;
+      text-align: center;
+      padding: 28px 16px;
+      border-radius: 0 0 30px 30px;
+    }
+    .pub-hero h1 {
+      font-size: 22px;
+      font-weight: 900;
+    }
+    .pub-hero p {
+      color: #D1FAE5;
+      font-size: 12.5px;
+      margin-top: 5px;
+    }
+    .pub-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px 14px 80px;
+    }
+    /* ========================================================
+       15) الجولة + التنبيهات + التوست
+       ======================================================== */
+    #tourWrap {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(2, 6, 23, .6);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 18px;
+    }
+    .tourbox {
+      background: var(--cd);
+      border-radius: 20px;
+      padding: 16px;
+      width: min(460px, 100%);
+    }
+    .tourbox h4 {
+      color: var(--teal);
+      font-size: 14px;
+      font-weight: 900;
+    }
+    .tourbox p {
+      font-size: 12px;
+      color: var(--tx2);
+      font-weight: 700;
+      margin: 6px 0 10px;
+    }
+    #alertPanel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(380px, 100%);
+      height: 100vh;
+      z-index: 300;
+      background: var(--cd);
+      box-shadow: 10px 0 40px rgba(0, 0, 0, .3);
+      padding: 14px;
+      overflow-y: auto;
+    }
+    #toastBox {
+      position: fixed;
+      bottom: 70px;
+      right: 50%;
+      transform: translateX(50%);
+      z-index: 600;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      align-items: center;
+    }
+    .tst {
+      border-radius: 13px;
+      padding: 10px 18px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .3);
+    }
+    .tst.ok {
+      background: linear-gradient(120deg, #16A34A, #65A30D);
+    }
+    .tst.err {
+      background: linear-gradient(120deg, #EF4444, #F87171);
+    }
+    .tst.info {
+      background: linear-gradient(120deg, #0EA5E9, #38BDF8);
+    }
+    /* ========================================================
+       16) الاستجابة + الطباعة
+       ======================================================== */
+    @media (max-width: 1000px) {
+      .kpis {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .side {
+        display: none;
+      }
+      .bnav {
+        display: flex;
+      }
+      .g2 {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 700px) {
+      .kpis,
+      .g4 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .shopgrid,
+      .g3 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 460px) {
+      .shopgrid,
+      .g3,
+      .g4 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .mapgrid {
+        grid-template-columns: repeat(8, 1fr);
+      }
+    }
+    @media print {
+      .topbar,
+      .side,
+      .bnav,
+      #toastBox,
+      .noprint {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+      }
+      .cd {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+  <!-- ===================== تسجيل الدخول ===================== -->
+  <div id="loginWrap">
+    <div class="lgbox">
+      <div class="ic">🤖</div>
+      <h1>الراعي الذكي + سوق أخضر</h1>
+      <small>SMART SHEPHERD · CONTROL TOWER · MARKET</small>
+      <p>برج تحكم الروبوت: كشف آفات 🐛 · رش موضعي 💧 · طاقة شمسية ☀️ · وبيع إنتاجك 🛒</p>
+      <label class="fd">👤 المستخدم
+        <select class="inp" id="lgUser">
+          <option>م. أحمد — مزارع</option>
+          <option>م. سارة — فني</option>
+          <option>د. خالد — مدير</option>
+        </select>
+      </label>
+      <label class="fd">🔑 كلمة المرور
+        <input class="inp" id="lgPass" type="password" placeholder="1234">
+      </label>
+      <button class="bt gg" id="lgBtn" style="width:100%;justify-content:center">🚀 دخول المنظومة</button>
+      <p style="margin-top:10px">تجريبي: أي مستخدم + <b>1234</b></p>
+    </div>
+  </div>
+
+  <!-- ===================== التطبيق ===================== -->
+  <div id="app" class="hidden">
+    <header class="topbar">
+      <div class="lg">🤖</div>
+      <div>
+        <b>الراعي الذكي</b>
+        <small>SMART SHEPHERD · CONTROL TOWER + MARKET</small>
+      </div>
+      <span class="sp"></span>
+      <select class="chip" id="fieldSel" style="background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.35);border-radius:12px;padding:5px 8px;font-weight:800">
+        <option>🍓 حقل أ — فراولة</option>
+        <option>🍅 حقل ب — طماطم</option>
+      </select>
+      <span class="chip" id="connChip">🟢 متصل</span>
+      <button class="tbtn" id="btnTheme">🌙</button>
+      <button class="tbtn" id="btnTour">🎓</button>
+      <button class="tbtn" id="bellBtn">🔔<span class="bdg" id="alertCount">0</span></button>
+    </header>
+
+    <div class="shell">
+      <nav class="side" id="sideNav">
+        <button data-sec="dash" class="on">🏠 لوحة التحكم</button>
+        <button data-sec="map">🗺️ خريطة الحقل</button>
+        <button data-sec="plant">🌿 صحة النبات</button>
+        <button data-sec="robot">🤖 حالة الروبوت</button>
+        <button data-sec="energy">☀️ مركز الطاقة</button>
+        <button data-sec="water">💧 مستشار الري</button>
+        <button data-sec="tasks">📋 المهام</button>
+        <button data-sec="market" class="mk">🛒 البيع والتسويق</button>
+        <button data-sec="reports">📊 التقارير</button>
+        <button data-sec="assist">💬 المساعد</button>
+        <button data-sec="settings">⚙️ الإعدادات</button>
+        <div class="ver">🔖 v2.0 · 📡 MQTT · 📍 النوبارية</div>
+      </nav>
+
+      <main class="main">
+
+        <!-- ========== لوحة التحكم ========== -->
+        <section id="sec-dash">
+          <div class="cd a-t">
+            <h3>🌱 حقلك تحت السيطرة <span class="sp"></span><span class="chip2 green" id="dashDate"></span></h3>
+            <p class="desc">🤖 فحص → 🧠 كشف → 💧 رش موضعي → 📊 توفير → 🛒 بيع. كل شيء مترابط.</p>
+            <div class="kpis">
+              <div class="kp" data-go="plant"><span class="ic">🔍</span><b id="kScan">0</b><span>مفحوص اليوم</span></div>
+              <div class="kp" data-go="plant"><span class="ic">🐛</span><b id="kPest">0</b><span>إصابات</span></div>
+              <div class="kp" data-go="robot"><span class="ic">💧</span><b id="kAct">0</b><span>تدخلات</span></div>
+              <div class="kp" data-go="reports"><span class="ic">🧪</span><b id="kSaved">0</b><span>مل موفَّر</span></div>
+              <div class="kp" data-go="energy"><span class="ic">🔋</span><b id="kBatt">0%</b><span>البطارية</span></div>
+              <div class="kp" data-go="market"><span class="ic">🛒</span><b id="kSales">0</b><span>جنيه مبيعات</span></div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="cd a-g">
+              <h3>📈 البطارية والشمس (مباشر)</h3>
+              <canvas id="chBS" class="chartbox" height="150"></canvas>
+            </div>
+            <div class="cd a-s">
+              <h3>🧭 توصية اليوم</h3>
+              <div id="recBox"></div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="cd a-r">
+              <h3>🐛 آخر الاكتشافات <span class="sp"></span><button class="bt ss xs" data-go="plant">الكل ←</button></h3>
+              <div id="detMini"></div>
+            </div>
+            <div class="cd a-o">
+              <h3>🌦 الطقس الحقلي</h3>
+              <div id="wxBox" class="g4"></div>
+              <div class="note green" id="wxAdvice"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== الخريطة ========== -->
+        <section id="sec-map" class="hidden">
+          <div class="cd a-g">
+            <h3>🗺️ خريطة المصاطب <span class="sp"></span>
+              <select class="inp" id="layerSel" style="max-width:160px;padding:6px 9px;font-size:11px">
+                <option value="st">🩺 الحالة</option>
+                <option value="hum">💧 الرطوبة</option>
+                <option value="hot">🔥 حرارية</option>
+              </select>
+              <button class="bt gg xs" id="btnRescan">🔄 مسح جديد</button>
+            </h3>
+            <p class="desc">كل مربع = نبتة. اضغط لعرض تفاصيلها وإجراءاتها.</p>
+            <div class="mapgrid" id="mapGrid"></div>
+            <div class="g2" style="margin-top:12px">
+              <div class="item" id="plantInfo">👆 اختر نبتة من الخريطة</div>
+              <div class="ac" id="plantActs"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== صحة النبات ========== -->
+        <section id="sec-plant" class="hidden">
+          <div class="cd a-r">
+            <h3>🌿 سجل الاكتشافات <span class="sp"></span>
+              <select class="inp" id="flSev" style="max-width:130px;padding:6px 9px;font-size:11px"><option value="">كل الخطورات</option><option>حرجة</option><option>متوسطة</option><option>خفيفة</option></select>
+              <select class="inp" id="flSt" style="max-width:130px;padding:6px 9px;font-size:11px"><option value="">كل الحالات</option><option>مشتبه</option><option>مؤكدة</option><option>مراقبة</option><option>معالجة</option></select>
+            </h3>
+            <div id="detList"></div>
+          </div>
+        </section>
+
+        <!-- ========== الروبوت ========== -->
+        <section id="sec-robot" class="hidden">
+          <div class="cd a-t">
+            <h3>🤖 الروبوت SS-01</h3>
+            <div class="g4" style="margin-top:8px">
+              <div class="kp"><span class="ic">🔋</span><b id="rBatt">—</b><span>البطارية</span></div>
+              <div class="kp"><span class="ic">💧</span><b id="rTank">—</b><span>الخزان</span></div>
+              <div class="kp"><span class="ic">☀️</span><b id="rSolar">—</b><span>الشمس</span></div>
+              <div class="kp"><span class="ic">🌡</span><b id="rTemp">—</b><span>المحركات</span></div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="cd a-p">
+              <h3>📷 الكاميرا الأمامية <span class="chip2 red">LIVE</span></h3>
+              <div class="cambox" id="camView"><span class="live">● LIVE</span></div>
+              <div class="ac" style="margin-top:8px">
+                <button class="bt ss xs" id="camSnap">📸 لقطة</button>
+                <button class="bt oo xs" id="camCal">🎯 معايرة</button>
+              </div>
+            </div>
+            <div class="cd a-o">
+              <h3>🎛 أوامر التحكم</h3>
+              <div class="ac">
+                <button class="bt gg sm" id="cScan">▶ مسح</button>
+                <button class="bt oo sm" id="cPause">⏸ مؤقت</button>
+                <button class="bt ss sm" id="cCharge">🔌 شحن</button>
+                <button class="bt pp sm" id="cSpray">💧 رش</button>
+                <button class="bt rd sm" id="cEmg">⛔ طارئ</button>
+              </div>
+              <label class="fd" style="margin-top:10px">🚀 السرعة: <span id="spdV">0.4</span> م/ث
+                <input type="range" id="spdR" min="0.1" max="1" step="0.1" value="0.4">
+              </label>
+              <label class="fd">💧 حجم الرشّة: <span id="sprV">6</span> مل
+                <input type="range" id="sprR" min="2" max="20" step="1" value="6">
+              </label>
+              <h3 style="margin-top:8px">📜 السجل المباشر</h3>
+              <div class="logbox" id="cmdLog"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== الطاقة ========== -->
+        <section id="sec-energy" class="hidden">
+          <div class="cd a-o">
+            <h3>☀️ مركز الطاقة</h3>
+            <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+              <div class="kp"><span class="ic">☀️</span><b id="eProd">0</b><span>Wh إنتاج</span></div>
+              <div class="kp"><span class="ic">⚡</span><b id="eCons">0</b><span>Wh استهلاك</span></div>
+              <div class="kp"><span class="ic">🔋</span><b id="eChg">0%</b><span>الشحنة</span></div>
+              <div class="kp"><span class="ic">🌿</span><b id="eCo2">0</b><span>جم CO₂ متجنَّب</span></div>
+            </div>
+            <canvas id="ch7" class="chartbox" height="150"></canvas>
+            <canvas id="chDonut" class="chartbox" height="150"></canvas>
+            <h3 style="margin-top:10px">🔋 خلايا البطارية 8S</h3>
+            <div class="g4" id="cellsBox" style="grid-template-columns:repeat(8,1fr)"></div>
+            <div class="ac" style="margin-top:10px">
+              <button class="bt oo sm" id="mSolar">☀️ شمسي صرف</button>
+              <button class="bt ss sm" id="mHybrid">🔌 هجين</button>
+              <button class="bt gg sm" id="mCharge">🔌 شحن الآن</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== الري ========== -->
+        <section id="sec-water" class="hidden">
+          <div class="cd a-s">
+            <h3>💧 مناطق الري <span class="sp"></span><label class="ac"><input type="checkbox" id="autoChk" class="chk"><span style="font-size:12px;font-weight:800">🤖 ري تلقائي</span></label></h3>
+            <div class="g3" id="zonesBox"></div>
+            <h3 style="margin-top:12px">⏰ جدول الري</h3>
+            <div class="g2">
+              <label class="fd">🌅 الرية 1<input type="time" class="inp" id="sch1" value="06:00"></label>
+              <label class="fd">🌇 الرية 2<input type="time" class="inp" id="sch2" value="18:00"></label>
+            </div>
+            <button class="bt gg sm" id="btnSched">💾 حفظ الجدول</button>
+          </div>
+        </section>
+
+        <!-- ========== المهام ========== -->
+        <section id="sec-tasks" class="hidden">
+          <div class="cd a-p">
+            <h3>📋 مهام اليوم <span class="sp"></span><button class="bt gg xs" id="btnTaskAdd">＋ مهمة</button></h3>
+            <div class="ac" style="margin-bottom:8px">
+              <input class="inp" id="taTxt" placeholder="نص المهمة..." style="max-width:260px">
+              <select class="inp" id="taPr" style="max-width:120px"><option>منخفضة</option><option>متوسطة</option><option>عالية</option></select>
+            </div>
+            <div id="taskList"></div>
+          </div>
+        </section>
+
+        <!-- ========== البيع والتسويق (الجديد) ========== -->
+        <section id="sec-market" class="hidden">
+          <div class="mkt-hero">
+            <h2>🛒 سوق أخضر — بيع إنتاجك زي العالم</h2>
+            <p>🇨🇳 شراء جماعي · 🇮🇳 مزاد علني · 🇳🇱 تتبّع QR بشهادة الروبوت · 🇺🇸 اشتراكات · 💰 محفظة · 🇪 شارة استدامة</p>
+          </div>
+          <div class="cd a-k">
+            <h3>📦 نشر عرض بيع <span class="sp"></span><button class="bt pk sm" id="mkBtn">➕ نشر</button><button class="bt ss xs" id="mkShop">🔗 لينك السوق</button></h3>
+            <div class="g4">
+              <label class="fd">المنتج<input class="inp" id="mkT" placeholder="فراولة درجة أولى"></label>
+              <label class="fd">الدرجة<select class="inp" id="mkG"><option>درجة أولى</option><option>درجة ثانية</option><option>درجة ثالثة</option><option>مخلوط</option></select></label>
+              <label class="fd">الكمية كجم<input type="number" class="inp" id="mkQ"></label>
+              <label class="fd">السعر ج/كجم<input type="number" class="inp" id="mkP"></label>
+            </div>
+            <div class="g2">
+              <label class="fd">📞 واتساب<input class="inp" id="mkPh" dir="ltr" placeholder="01x..."></label>
+              <label class="fd">📝 وصف<input class="inp" id="mkD" placeholder="مقاس 40+ جاهز تصدير"></label>
+            </div>
+            <div class="shopgrid" id="mkList"></div>
+          </div>
+          <div class="cd a-o">
+            <h3>🤝 عروض الشراء الواردة <span class="sp"></span><span class="chip2 yel" id="ofCount">0 جديد</span></h3>
+            <div id="ofList"></div>
+          </div>
+          <div class="g2">
+            <div class="cd a-k">
+              <h3>🇨🇳 شراء جماعي <span class="sp"></span><button class="bt pk xs" id="gbBtn">＋ حملة</button></h3>
+              <div class="g2">
+                <label class="fd">المنتج<input class="inp" id="gbT"></label>
+                <label class="fd">الهدف كجم<input type="number" class="inp" id="gbTg"></label>
+                <label class="fd">سعر عادي<input type="number" class="inp" id="gbP"></label>
+                <label class="fd">سعر مجموعة<input type="number" class="inp" id="gbGp"></label>
+              </div>
+              <div id="gbList"></div>
+            </div>
+            <div class="cd a-o">
+              <h3>🇮🇳 مزاد علني <span class="sp"></span><button class="bt oo xs" id="auBtn">＋ مزاد</button></h3>
+              <div class="g2">
+                <label class="fd">الدفعة<input class="inp" id="auT"></label>
+                <label class="fd">بداية ج<input type="number" class="inp" id="auS"></label>
+                <label class="fd">الدرجة<select class="inp" id="auG"><option>درجة أولى</option><option>درجة ثانية</option><option>درجة ثالثة</option></select></label>
+                <label class="fd">ساعات<input type="number" class="inp" id="auH" value="24"></label>
+              </div>
+              <div id="auList"></div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="cd a-g">
+              <h3>🇳🇱 تتبّع + شهادة QR <span class="sp"></span><button class="bt gg xs" id="loBtn">＋ دفعة</button></h3>
+              <p class="desc">الشهادة بتسجل تدخلات الروبوت الحقيقية (رش/شفط) فترفع سعر الدفعة قدام التصدير.</p>
+              <div class="g2">
+                <label class="fd">الكود<input class="inp" id="loC" placeholder="LOT-001"></label>
+                <label class="fd">المحصول<input class="inp" id="loCr"></label>
+                <label class="fd">الدرجة<select class="inp" id="loG"><option>درجة أولى</option><option>درجة ثانية</option><option>درجة ثالثة</option></select></label>
+                <label class="fd">الحصاد<input type="date" class="inp" id="loD"></label>
+              </div>
+              <label class="fd">سجل الروبوت 🤖<textarea class="inp" id="loSp" placeholder="تُعبّى تلقائياً من سجل التدخلات أو اكتب يدوي"></textarea></label>
+              <div id="loList"></div>
+            </div>
+            <div class="cd a-s">
+              <h3>🇺🇸 اشتراكات صندوق أسبوعي <span class="sp"></span><button class="bt ss xs" id="sbBtn">＋ خطة</button></h3>
+              <div class="g4" style="grid-template-columns:1fr 1fr">
+                <label class="fd">الاسم<input class="inp" id="sbN"></label>
+                <label class="fd">كجم/أسبوع<input type="number" class="inp" id="sbK"></label>
+                <label class="fd">ج/أسبوع<input type="number" class="inp" id="sbP"></label>
+                <label class="fd">أسابيع<input type="number" class="inp" id="sbW"></label>
+              </div>
+              <div id="sbList"></div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="cd a-g">
+              <h3>💰 المحفظة <span class="sp"></span><button class="bt gg xs" id="wBtn">＋ قيد</button></h3>
+              <div class="kpis" style="grid-template-columns:repeat(3,1fr)" id="wKpis"></div>
+              <div class="g3">
+                <label class="fd">النوع<select class="inp" id="wT"><option value="in">دخل</option><option value="out">مصروف</option></select></label>
+                <label class="fd">المبلغ<input type="number" class="inp" id="wA"></label>
+                <label class="fd">البيان<input class="inp" id="wN"></label>
+              </div>
+              <div id="wList"></div>
+            </div>
+            <div class="cd a-p">
+              <h3>🇪 شارة الاستدامة (من بيانات الروبوت)</h3>
+              <div class="g2">
+                <label class="fd">% مبيد موفَّر (تلقائي من التقارير)<input class="inp" id="susP" readonly></label>
+                <label class="fd">ساعات شحن شمسي/يوم<input type="number" class="inp" id="susS" value="6"></label>
+              </div>
+              <div class="ac"><button class="bt pp sm" id="susBtn">⚡ احسب الشارة</button><span id="susBadge"></span></div>
+              <div class="note green">الشارة بتتلصق تلقائياً على كل عروضك وشهاداتك — نموذج أوروبي لرفع سعر التصدير.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== التقارير ========== -->
+        <section id="sec-reports" class="hidden">
+          <div class="cd a-s">
+            <h3>📊 التقارير <span class="sp"></span>
+              <button class="bt ss xs rp" data-p="d">📆 يومي</button>
+              <button class="bt gh xs rp" data-p="w">📅 أسبوعي</button>
+              <button class="bt gh xs rp" data-p="s">🌾 الموسم</button>
+            </h3>
+            <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+              <div class="kp"><span class="ic">🔍</span><b id="rpScan">0</b><span>مفحوص</span></div>
+              <div class="kp"><span class="ic">💧</span><b id="rpAct">0</b><span>تدخلات</span></div>
+              <div class="kp"><span class="ic">🧪</span><b id="rpSaved">0</b><span>مل موفَّر</span></div>
+              <div class="kp"><span class="ic">📉</span><b id="rpPct">0%</b><span>نسبة التوفير</span></div>
+            </div>
+            <canvas id="chRep" class="chartbox" height="150"></canvas>
+            <h3 style="margin-top:10px">🧾 سجل التدخلات</h3>
+            <div id="intTable"></div>
+            <div class="ac" style="margin-top:10px">
+              <button class="bt gg sm" id="btnCsv">⬇ CSV</button>
+              <button class="bt ss sm noprint" id="btnPdf">🖨 PDF</button>
+              <button class="bt pp sm" id="btnCert">🛡 شهادة متبقيات</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== المساعد ========== -->
+        <section id="sec-assist" class="hidden">
+          <div class="cd a-p">
+            <h3>💬 مساعد الراعي</h3>
+            <div class="chatbox" id="chatBox"></div>
+            <div class="ac" style="margin-top:8px">
+              <button class="bt gh xs cq">🔋 حالة البطارية؟</button>
+              <button class="bt gh xs cq">🐛 إصابات النهارده؟</button>
+              <button class="bt gh xs cq">💧 محتاج ري فين؟</button>
+              <button class="bt gh xs cq">🛒 كام مبيعاتي؟</button>
+            </div>
+            <div class="ac" style="margin-top:8px">
+              <input class="inp" id="chatIn" placeholder="اسأل مساعد الراعي...">
+              <button class="bt gg sm" id="chatSend">📨 إرسال</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== الإعدادات ========== -->
+        <section id="sec-settings" class="hidden">
+          <div class="cd a-t">
+            <h3>🎚 حدود التشغيل</h3>
+            <div class="g4">
+              <label class="fd">💧 رطوبة منخفضة %<input type="number" class="inp" id="thHum" value="35"></label>
+              <label class="fd">🎯 ثقة الرش %<input type="number" class="inp" id="thConf" value="85"></label>
+              <label class="fd">🧪 خزان منخفض %<input type="number" class="inp" id="thTank" value="20"></label>
+              <label class="fd">🔋 بطارية منخفضة %<input type="number" class="inp" id="thBatt" value="25"></label>
+            </div>
+            <h3>📡 الاتصال</h3>
+            <div class="g3">
+              <label class="fd">🛰 وسيط MQTT<input class="inp" id="mqttHost" value="broker.hivemq.com"></label>
+              <label class="fd">🔌 المنفذ<input class="inp" id="mqttPort" value="8883"></label>
+              <label class="fd">🔑 توكن الجهاز<input class="inp" id="devToken" value="SS-EG-2026-7F3A-91C4" dir="ltr"></label>
+            </div>
+            <div class="ac">
+              <button class="bt gg sm" id="btnSaveSet">💾 حفظ</button>
+              <button class="bt ss sm" id="btnExport">⬇ تصدير JSON</button>
+              <button class="bt rd sm" id="btnWipe">🗑 تصفير البيانات</button>
+            </div>
+          </div>
+          <div class="cd a-p">
+            <h3>👥 المستخدمون <span class="sp"></span><button class="bt pp xs" id="btnAddUser">＋ إضافة</button></h3>
+            <div id="usersBox"></div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <nav class="bnav" id="bNav">
+      <button data-sec="dash" class="on">🏠<span>لوحة</span></button>
+      <button data-sec="map">🗺️<span>خريطة</span></button>
+      <button data-sec="robot">🤖<span>روبوت</span></button>
+      <button data-sec="market">🛒<span>بيع</span></button>
+      <button data-sec="tasks">📋<span>مهام</span></button>
+      <button data-sec="reports">📊<span>تقارير</span></button>
+      <button data-sec="assist">💬<span>مساعد</span></button>
+      <button data-sec="settings">⚙️<span>إعدادات</span></button>
+    </nav>
+  </div>
+
+  <!-- ===================== لوحات عائمة ===================== -->
+  <div id="alertPanel" class="hidden">
+    <div class="ac"><b style="font-size:15px;font-weight:900">🔔 مركز التنبيهات</b><span class="sp"></span><button class="bt gh xs" id="alClose">✖</button></div>
+    <div class="ac" style="margin:8px 0"><button class="bt gg xs" id="alAll">✓ تعليم الكل مقروء</button></div>
+    <div id="alertList"></div>
+  </div>
+
+  <div id="tourWrap" class="hidden">
+    <div class="tourbox">
+      <h4 id="tourT"></h4>
+      <p id="tourP"></p>
+      <div class="ac"><button class="bt gg sm" id="tourNext">التالي ←</button><button class="bt gh sm" id="tourSkip">⏭ تخطي</button><span class="sp"></span><span class="chip2" id="tourI"></span></div>
+    </div>
+  </div>
+
+  <div id="pubWrap" class="hidden"></div>
+  <div id="toastBox"></div>
+
+  <!-- ✅✅✅ اللصقة 2 (المحرك الكامل JS) بتتلصق هنا وراها على طول ✅✅✅ -->
+<script>
+(function(){
+"use strict";
+/* ================= 01) إعدادات الربط ================= */
+var FB=""; /* ← حط لينك Firebase Realtime Database هنا لمزامنة السوق والبيانات بين الأجهزة والتطبيقين */
+var SURVEY_URL="index.html"; /* ← لينك تطبيق الاستبيان في نفس الموقع */
+/* ================= 02) أدوات ================= */
+var $=function(i){return document.getElementById(i);};
+var $$=function(s){return [].slice.call(document.querySelectorAll(s));};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmt(n){return (+n||0).toLocaleString('ar-EG');}
+function toast(m,t){var d=document.createElement('div');d.className='tst '+(t||'info');d.textContent=m;$('toastBox').appendChild(d);setTimeout(function(){d.remove();},2600);}
+function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v;}catch(e){return d;}}
+function SV(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function put(p,o){if(FB)fetch(FB+p+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(o)}).catch(function(){});}
+function WP(p){p=String(p||'').replace(/\D/g,'');if(p.charAt(0)==='0')p='2'+p;return p;}
+function CP(t,m){if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){toast(m,'ok');});else{prompt('انسخ:',t);toast(m,'ok');}}
+function base(){return location.href.split('#')[0].split('?')[0];}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function ri(a,b){return Math.floor(rnd(a,b+1));}
+/* ================= 03) الحالة والبذور ================= */
+var PESTS=['العنكبوت الأحمر','التربس','البياض الدقيقي','المنّ','الذبابة البيضاء'];
+function seedPlants(){var a=[];for(var r=0;r<6;r++)for(var c=0;c<12;c++){var st='healthy';var x=Math.random();if(x<.10)st='inf';else if(x<.22)st='warn';a.push({id:r*12+c,r:r,c:c,st:st,hum:ri(28,72),temp:ri(24,34),pest:st==='inf'?PESTS[ri(0,4)]:'',conf:st==='inf'?ri(86,97):ri(40,70),scan:Date.now()-ri(1,50)*60000});}return a;}
+function defState(){var now=Date.now();return{
+robot:{batt:78,tank:2400,solar:0,temp:41,mode:'scan',speed:.4,spray:6,x:2,y:1,pump:'جاهزة'},
+plants:seedPlants(),
+dets:[{id:1,t:now-3600e3,pest:'العنكبوت الأحمر',sev:'حرجة',conf:94,st:'مؤكدة',cell:17},{id:2,t:now-7200e3,pest:'التربس',sev:'متوسطة',conf:88,st:'معالجة',cell:33},{id:3,t:now-9000e3,pest:'البياض الدقيقي',sev:'حرجة',conf:91,st:'مؤكدة',cell:41},{id:4,t:now-5400e3,pest:'المنّ',sev:'خفيفة',conf:76,st:'مراقبة',cell:8},{id:5,t:now-1800e3,pest:'الذبابة البيضاء',sev:'متوسطة',conf:83,st:'مشتبه',cell:55}],
+ints:[{id:1,t:now-3500e3,cell:17,pest:'العنكبوت الأحمر',ml:6,mode:'رش موضعي'},{id:2,t:now-7100e3,cell:33,pest:'التربس',ml:6,mode:'رش موضعي'},{id:3,t:now-86400e3,cell:41,pest:'البياض الدقيقي',ml:8,mode:'رش موضعي'},{id:4,t:now-2*86400e3,cell:8,pest:'المنّ',ml:0,mode:'شفط ميكانيكي'},{id:5,t:now-3*86400e3,cell:55,pest:'الذبابة البيضاء',ml:0,mode:'نفخ هوائي'}],
+tasks:[{id:1,txt:'فحص مصاطب الصف 3',pr:'عالية',done:false},{id:2,txt:'تنظيف فلتر المضخة',pr:'متوسطة',done:false},{id:3,txt:'معايرة كاميرا الأوراق',pr:'منخفضة',done:true},{id:4,txt:'تعبئة خزان المحلول الحيوي',pr:'عالية',done:false}],
+alerts:[{id:1,t:now-1200e3,lvl:'حرجة',msg:'إصابة عنكبوت أحمر مؤكدة — خلية 17',sec:'plant',read:false},{id:2,t:now-2600e3,lvl:'تحذير',msg:'رطوبة المنطقة ج تحت الحد',sec:'water',read:false},{id:3,t:now-5000e3,lvl:'معلومة',msg:'تم شحن 120Wh شمسياً اليوم',sec:'energy',read:true}],
+users:[{n:'م. أحمد',role:'مزارع'},{n:'م. سارة',role:'فني'},{n:'د. خالد',role:'مدير'}],
+set:{hum:35,conf:85,tank:20,batt:25,mqtt:'broker.hivemq.com',port:'8883',token:'SS-EG-2026-7F3A-91C4',auto:true,s1:'06:00',s2:'18:00',theme:'light'},
+hist:{batt:[],solar:[]},
+mkt:{lists:[{id:11,title:'فراولة درجة أولى',grade:'درجة أولى',qty:420,price:32,phone:'01001234567',desc:'مقاس 40+ مجمعة صباحاً',img:'',status:'available'},{id:12,title:'طماطم درجة ثانية',grade:'درجة ثانية',qty:300,price:14,phone:'01001234567',desc:'جاهزة للسوق المحلي',img:'',status:'available'}],
+offers:[{id:21,listingId:11,buyer:'شركة النيل للتصدير',phone:'01112223334',price:35,qty:420,t:now-900e3,status:'new'}],
+gb:[{id:31,title:'فراولة درجة أولى',target:500,price:32,gp:26,joins:[{n:'جمعية النور',p:'01234567890',qty:180}]}],
+auc:[{id:41,title:'700 كجم طماطم درجة أولى',grade:'درجة أولى',start:18,end:now+20*3600e3,bids:[{n:'تاجر الجملة',p:'01555555555',price:21,t:now-600e3}]}],
+lots:[{code:'LOT-001',crop:'فراولة',grade:'درجة أولى',date:new Date(now-86400e3).toISOString().slice(0,10),spray:'3 رش موضعي (6مل) + 2 شفط — 80% بدون كيماوي'}],
+subs:[{id:51,name:'صندوق الأسرة',kg:5,price:150,weeks:8,subs:[{n:'أسرة محمد',p:'01099887766',a:'النوبارية'}]}],
+wal:[{id:61,type:'in',amount:13440,note:'بيع دفعة فراولة',date:new Date(now-86400e3).toISOString().slice(0,10)},{id:62,type:'out',amount:2200,note:'سماد حيوي',date:new Date(now-2*86400e3).toISOString().slice(0,10)},{id:63,type:'in',amount:4200,note:'اشتراكات صندوق',date:new Date(now-3*86400e3).toISOString().slice(0,10)}]},
+tourDone:false,session:null};}
+var ST=LS('ss_state',null)||defState();
+function save(){SV('ss_state',ST);put('/state',ST);}
+function sync(cb){if(!FB){cb();return;}fetch(FB+'/state.json').then(function(r){return r.json();}).then(function(v){if(v&&v.mkt){ST=v;cb();}}).catch(function(){cb();});}
+/* ================= 04) رسوم Canvas ================= */
+function line(cv,sets){if(!cv)return;var x=cv.getContext('2d');var W=cv.width=cv.offsetWidth||500,H=cv.height;x.clearRect(0,0,W,H);var n=Math.max(2,sets[0].v.length);var max=100;sets.forEach(function(s){s.v.forEach(function(v){max=Math.max(max,v);});});
+x.strokeStyle='rgba(100,116,139,.25)';for(var g=1;g<4;g++){x.beginPath();x.moveTo(0,H*g/4);x.lineTo(W,H*g/4);x.stroke();}
+sets.forEach(function(s){x.strokeStyle=s.c;x.lineWidth=2.5;x.beginPath();s.v.forEach(function(v,i){var px=i/(n-1)*W,py=H-8-(v/max)*(H-20);i?x.lineTo(px,py):x.moveTo(px,py);});x.stroke();});}
+function bars(cv,labels,sets){if(!cv)return;var x=cv.getContext('2d');var W=cv.width=cv.offsetWidth||500,H=cv.height;x.clearRect(0,0,W,H);var max=1;sets.forEach(function(s){s.v.forEach(function(v){max=Math.max(max,v);});});var gw=W/(labels.length||1),bw=gw/(sets.length+1);
+labels.forEach(function(l,i){sets.forEach(function(s,j){var v=s.v[i]||0,h=(H-26)*(v/max);x.fillStyle=s.c;x.fillRect(i*gw+bw*(j+.5),H-18-h,bw*.9,h);});x.fillStyle='#64748B';x.font='9px Cairo';x.textAlign='center';x.fillText(l,i*gw+gw/2,H-5);});}
+function donut(cv,parts){if(!cv)return;var x=cv.getContext('2d');var W=cv.width=cv.offsetWidth||500,H=cv.height;x.clearRect(0,0,W,H);var tot=parts.reduce(function(a,p){return a+p.v;},0)||1;var a0=-Math.PI/2,cx=H/2+10,cy=H/2,r=H/2-12;
+parts.forEach(function(p){var a1=a0+p.v/tot*Math.PI*2;x.beginPath();x.moveTo(cx,cy);x.arc(cx,cy,r,a0,a1);x.closePath();x.fillStyle=p.c;x.fill();a0=a1;});
+x.beginPath();x.arc(cx,cy,r*.55,0,7);x.fillStyle=getComputedStyle(document.body).getPropertyValue('--cd');x.fill();
+var ly=16;parts.forEach(function(p){x.fillStyle=p.c;x.fillRect(H+24,ly-8,10,10);x.fillStyle='#64748B';x.font='10px Cairo';x.textAlign='right';x.fillText(p.n+' '+Math.round(p.v/tot*100)+'%',W-10,ly);ly+=16;});}
+/* ================= 05) المحاكاة ================= */
+function sunW(){var h=new Date().getHours()+new Date().getMinutes()/60;return Math.max(0,Math.sin((h-6)/12*Math.PI))*220;}
+function tick(){var R=ST.robot;R.solar=Math.round(sunW()*rnd(.85,1));
+var drain=R.mode==='scan'?.5:R.mode==='charge'?-.9:.12;
+R.batt=Math.max(5,Math.min(100,R.batt-drain+R.solar/220*.35));
+R.temp=Math.round(38+R.solar/220*8+rnd(-1,1));
+if(R.mode==='scan'){R.x+=1;if(R.x>11){R.x=0;R.y=(R.y+1)%6;}
+var p=ST.plants[R.y*12+R.x];p.scan=Date.now();
+if(p.st==='healthy'&&Math.random()<.06){p.st='inf';p.pest=PESTS[ri(0,4)];p.conf=ri(80,97);ST.dets.unshift({id:Date.now(),t:Date.now(),pest:p.pest,sev:p.conf>90?'حرجة':p.conf>82?'متوسطة':'خفيفة',conf:p.conf,st:'مشتبه',cell:p.id});pushAlert('حرجة','كشف جديد: '+p.pest+' — خلية '+p.id,'plant');}
+if(p.st==='inf'&&p.conf>=ST.set.conf&&R.tank>ST.set.spray){doSpray(p);}
+}
+ST.hist.batt.push(Math.round(R.batt));ST.hist.solar.push(R.solar);
+if(ST.hist.batt.length>40){ST.hist.batt.shift();ST.hist.solar.shift();}
+if(R.tank<ST.set.tank/100*3000&&!ST.tasks.some(function(t){return t.txt.indexOf('تعبئة')===0&&!t.done;})){ST.tasks.unshift({id:Date.now(),txt:'تعبئة خزان المحلول الحيوي',pr:'عالية',done:false});pushAlert('تحذير','الخزان منخفض — مهمة تعبئة اتولدت','robot');}
+if(R.batt<ST.set.batt&&R.mode!=='charge'){R.mode='charge';pushAlert('تحذير','بطارية منخفضة — تحويل للشحن','energy');}
+renderVisible();save();}
+function doSpray(p){var R=ST.robot;R.tank=Math.max(0,R.tank-R.spray);p.st='treat';
+ST.ints.unshift({id:Date.now(),t:Date.now(),cell:p.id,pest:p.pest,ml:R.spray,mode:'رش موضعي'});
+var d=ST.dets.find(function(x){return x.cell===p.id&&x.st!=='معالجة';});if(d)d.st='معالجة';
+log('SPRAY cell='+p.id+' ml='+R.spray,'c');}
+function pushAlert(lvl,msg,sec){ST.alerts.unshift({id:Date.now(),t:Date.now(),lvl:lvl,msg:msg,sec:sec,read:false});if(ST.alerts.length>40)ST.alerts.pop();}
+function log(m,c){var b=$('cmdLog');if(!b)return;var d=document.createElement('div');if(c)d.className=c;d.textContent='['+new Date().toLocaleTimeString('en-GB')+'] '+m;b.prepend(d);while(b.children.length>60)b.removeChild(b.lastChild);}
+/* ================= 06) التنقل ================= */
+var cur='dash';
+function showSec(k){cur=k;$$('#sideNav button, #bNav button').forEach(function(b){b.classList.toggle('on',b.dataset.sec===k);});
+['dash','map','plant','robot','energy','water','tasks','market','reports','assist','settings'].forEach(function(s){$('sec-'+s).classList.toggle('hidden',s!==k);});renderVisible();}
+$$('#sideNav button, #bNav button').forEach(function(b){b.onclick=function(){showSec(b.dataset.sec);};});
+document.addEventListener('click',function(e){var g=e.target.closest('[data-go]');if(g)showSec(g.dataset.go);});
+/* ================= 07) العرض لكل شاشة ================= */
+function renderVisible(){
+$('alertCount').textContent=ST.alerts.filter(function(a){return !a.read;}).length;
+if(cur==='dash')renderDash();
+if(cur==='map')renderMap();
+if(cur==='plant')renderDets();
+if(cur==='robot')renderRobot();
+if(cur==='energy')renderEnergy();
+if(cur==='water')renderWater();
+if(cur==='tasks')renderTasks();
+if(cur==='market')renderMarket();
+if(cur==='reports')renderReports();
+if(cur==='settings')renderSettings();}
+function renderDash(){var R=ST.robot;var today=ST.ints.filter(function(i){return Date.now()-i.t<86400e3;});
+$('dashDate').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
+$('kScan').textContent=fmt(ST.plants.filter(function(p){return Date.now()-p.scan<86400e3;}).length);
+$('kPest').textContent=ST.plants.filter(function(p){return p.st==='inf';}).length;
+$('kAct').textContent=today.length;
+$('kSaved').textContent=fmt(ST.ints.reduce(function(a,i){return a+(45-i.ml);},0));
+$('kBatt').textContent=Math.round(R.batt)+'%';
+$('kSales').textContent=fmt(ST.mkt.wal.filter(function(w){return w.type==='in';}).reduce(function(a,w){return a+w.amount;},0));
+line($('chBS'),[{c:'#22C55E',v:ST.hist.batt},{c:'#FACC15',v:ST.hist.solar.map(function(v){return v/2.2;})}]);
+var inf=ST.plants.filter(function(p){return p.st==='inf';}).length;var dry=ST.plants.filter(function(p){return p.hum<ST.set.hum;}).length;
+$('recBox').innerHTML=(inf?'<div class="item"><div class="tt">🐛 '+inf+' إصابة محتاجة تدخل <span class="sp"></span><button class="bt oo xs" data-go="plant">عالج ←</button></div></div>':'<div class="item"><div class="tt">✅ مفيش إصابات مؤكدة دلوقتي</div></div>')
++(dry?'<div class="item"><div class="tt">💧 '+dry+' نبتة تحت حد الرطوبة <span class="sp"></span><button class="bt ss xs" data-go="water">ري ←</button></div></div>':'')
++(R.tank<600?'<div class="item"><div class="tt">🧪 الخزان قرب يخلص <span class="sp"></span><button class="bt pp xs" data-go="robot">تعبئة ←</button></div></div>':'')
++'<div class="item"><div class="tt">🛒 عندك '+ST.mkt.offers.filter(function(o){return o.status==='new';}).length+' عرض شراء جديد <span class="sp"></span><button class="bt pk xs" data-go="market">شوف ←</button></div></div>';
+$('detMini').innerHTML=ST.dets.slice(0,3).map(function(d){return '<div class="item"><div class="tt">'+(d.sev==='حرجة'?'🔴':d.sev==='متوسطة'?'🟠':'')+' '+esc(d.pest)+' <span class="chip2">'+d.conf+'%</span><span class="sp"></span><span class="mm">خلية '+d.cell+'</span></div></div>';}).join('');
+var h=new Date().getHours();var t=Math.round(22+sunW()/220*9);var hu=Math.round(68-sunW()/220*26);var wi=ri(6,16);
+$('wxBox').innerHTML='<div class="kp"><span class="ic">🌡</span><b>'+t+'°</b><span>حرارة</span></div><div class="kp"><span class="ic">💧</span><b>'+hu+'%</b><span>رطوبة</span></div><div class="kp"><span class="ic">🌬</span><b>'+wi+'</b><span>كم/س</span></div><div class="kp"><span class="ic">☀️</span><b>'+ST.robot.solar+'</b><span>W شمسي</span></div>';
+$('wxAdvice').textContent=(wi<20&&hu<80&&t<35)?'✅ الجو مناسب للرش الموضعي دلوقتي.':'⛔ أجّل الرش: رياح/رطوبة/حرارة مش مناسبة.';}
+function renderMap(){var layer=$('layerSel').value;
+$('mapGrid').innerHTML=ST.plants.map(function(p){var cls='';if(layer==='st')cls=p.st==='inf'?'inf':p.st==='warn'?'warn':p.st==='treat'?'treat':'';
+if(layer==='hum')cls=p.hum<ST.set.hum?'dry':p.hum<50?'warn':'';
+if(layer==='hot')cls=p.temp>32?'hot':p.temp>29?'warn':'';
+return '<div class="cell '+cls+'" data-cell="'+p.id+'" title="خلية '+p.id+'"></div>';}).join('');}
+$('mapGrid').onclick=function(e){var c=e.target.closest('[data-cell]');if(!c)return;var p=ST.plants[+c.dataset.cell];
+$('plantInfo').innerHTML='<div class="tt">🌱 خلية '+p.id+' (صف '+(p.r+1)+' · نبتة '+(p.c+1)+')</div><div class="mm">الحالة: '+({healthy:'سليمة',warn:'مشتبه',inf:'مصابة',treat:'معالجة'})[p.st]+' · 💧'+p.hum+'% · 🌡'+p.temp+'° · 🎯'+p.conf+'% '+(p.pest?'· 🐛'+esc(p.pest):'')+'</div>';
+$('plantActs').innerHTML='<button class="bt oo sm" id="paSpray">💧 رش</button><button class="bt ss sm" id="paWatch">👁 مراقبة</button><button class="bt gg sm" id="paSend">🤖 إرسال الروبوت</button>';
+$('paSpray').onclick=function(){if(p.st==='inf'){doSpray(p);toast('تم الرش الموضعي 💧','ok');}else toast('النبتة مش مصابة','info');renderMap();save();};
+$('paWatch').onclick=function(){p.st='warn';toast('اتعلمت للمراقبة 👁','ok');renderMap();save();};
+$('paSend').onclick=function(){ST.robot.x=p.c;ST.robot.y=p.r;ST.robot.mode='scan';toast('الروبوت اتحرك للخلية 🤖','ok');showSec('robot');save();};};
+$('layerSel').onchange=renderMap;
+$('btnRescan').onclick=function(){ST.plants.forEach(function(p){p.scan=Date.now();p.hum=ri(28,72);});toast('مسح جديد اتعمل 🔄','ok');renderMap();save();};
+function renderDets(){var sv=$('flSev').value,st=$('flSt').value;
+var list=ST.dets.filter(function(d){return (!sv||d.sev===sv)&&(!st||d.st===st);});
+$('detList').innerHTML=list.map(function(d){return '<div class="item"><div class="tt">'+(d.sev==='حرجة'?'🔴':d.sev==='متوسطة'?'🟠':'🟢')+' '+esc(d.pest)+' <span class="chip2">'+d.conf+'%</span><span class="chip2 '+(d.st==='معالجة'?'green':d.st==='مؤكدة'?'red':'yel')+'">'+d.st+'</span><span class="sp"></span><span class="mm">خلية '+d.cell+' · '+new Date(d.t).toLocaleTimeString('ar-EG')+'</span></div><div class="ac" style="margin-top:6px">'+(d.st!=='معالجة'?'<button class="bt oo xs" data-tr="'+d.id+'">💧 رش</button><button class="bt ss xs" data-wa="'+d.id+'">👁 مراقبة</button>':'<span class="chip2 green">✅ اتعالجت</span>')+'</div></div>';}).join('')||'<p class="desc">مفيش نتائج بالفلتر ده.</p>';}
+$('flSev').onchange=renderDets;$('flSt').onchange=renderDets;
+$('detList').onclick=function(e){var tr=e.target.closest('[data-tr]'),wa=e.target.closest('[data-wa]');if(tr){var d=ST.dets.find(function(x){return x.id==tr.dataset.tr;});var p=ST.plants[d.cell];doSpray(p);d.st='معالجة';toast('تم الرش 💧','ok');}
+if(wa){var d2=ST.dets.find(function(x){return x.id==wa.dataset.wa;});d2.st='مراقبة';ST.plants[d2.cell].st='warn';toast('مراقبة 👁','ok');}
+renderDets();save();};
+function camSVG(){var R=ST.robot;var boxes='';ST.plants.filter(function(p){return p.r===R.y&&p.st==='inf';}).forEach(function(p){var x=30+p.c*30;boxes+='<rect x="'+x+'" y="70" width="26" height="34" fill="none" stroke="#FDE047" stroke-width="2"/><text x="'+x+'" y="66" font-size="8" fill="#FDE047" font-family="monospace">'+p.conf+'%</text>';});
+return '<svg viewBox="0 0 400 200" style="width:100%;height:100%"><rect width="400" height="200" fill="#0B1220"/><rect y="120" width="400" height="80" fill="#14532D"/>'+Array.from({length:12},function(_,i){return '<circle cx="'+(30+i*30)+'" cy="130" r="12" fill="#16A34A"/><circle cx="'+(30+i*30)+'" cy="124" r="5" fill="#EF4444" opacity=".8"/>';}).join('')+boxes+'<rect x="'+(20+R.x*30)+'" y="140" width="26" height="16" rx="4" fill="#22C55E"/><text x="10" y="190" font-size="9" fill="#A7F3D0" font-family="monospace">ROW '+(R.y+1)+' · CELL '+R.x+' · '+R.solar+'W</text></svg>';}
+function renderRobot(){var R=ST.robot;$('rBatt').textContent=Math.round(R.batt)+'%';$('rTank').textContent=Math.round(R.tank/30)+'%';$('rSolar').textContent=R.solar+'W';$('rTemp').textContent=R.temp+'°';
+$('camView').innerHTML='<span class="live">● LIVE</span>'+camSVG();}
+$('camSnap').onclick=function(){log('SNAPSHOT saved row='+(ST.robot.y+1),'c');toast('لقطة اتحفظت 📸','ok');};
+$('camCal').onclick=function(){log('CALIBRATION ok drift=0.2px','c');toast('معايرة تمت 🎯','ok');};
+$('cScan').onclick=function(){ST.robot.mode='scan';log('CMD SCAN start');toast('مسح شغال ▶','ok');save();};
+$('cPause').onclick=function(){ST.robot.mode='idle';log('CMD PAUSE');toast('وقف مؤقت ⏸','info');save();};
+$('cCharge').onclick=function(){ST.robot.mode='charge';log('CMD CHARGE dock');toast('شحن 🔌','ok');save();};
+$('cSpray').onclick=function(){var p=ST.plants[ST.robot.y*12+ST.robot.x];if(p.st==='inf'){doSpray(p);toast('رش 💧','ok');}else toast('مفيش إصابة في الخلية الحالية','info');save();};
+$('cEmg').onclick=function(){ST.robot.mode='stop';log('EMERGENCY STOP','e');pushAlert('حرجة','إيقاف طارئ اتفعل','robot');toast('إيقاف طارئ ⛔','err');save();};
+$('spdR').oninput=function(){ST.robot.speed=+this.value;$('spdV').textContent=this.value;save();};
+$('sprR').oninput=function(){ST.robot.spray=+this.value;$('sprV').textContent=this.value;save();};
+function renderEnergy(){var R=ST.robot;var prod=ST.hist.solar.reduce(function(a,v){return a+v;},0)/20;
+$('eProd').textContent=fmt(Math.round(prod));$('eCons').textContent=fmt(Math.round(prod*.62));$('eChg').textContent=Math.round(R.batt)+'%';$('eCo2').textContent=fmt(Math.round(prod*.4));
+var days=['س','ح','ن','ث','ر','خ','ج'];var vals=[180,220,150,260,240,210,Math.round(prod)];
+bars($('ch7'),days,[{c:'#FACC15',v:vals}]);
+donut($('chDonut'),[{n:'حركة',v:38,c:'#22C55E'},{n:'ذكاء',v:27,c:'#8B5CF6'},{n:'رش',v:19,c:'#0EA5E9'},{n:'اتصال',v:16,c:'#F97316'}]);
+$('cellsBox').innerHTML=Array.from({length:8},function(_,i){var v=(3.2+R.batt/100*.9+rnd(-.05,.05)).toFixed(2);var c=v>3.9?'#22C55E':v>3.5?'#F97316':'#EF4444';return '<div class="kp" style="text-align:center"><b style="color:'+c+';font-size:13px">'+v+'</b><span>خلية '+(i+1)+'</span></div>';}).join('');}
+$('mSolar').onclick=function(){ST.robot.mode='scan';toast('وضع شمسي صرف ☀️','ok');save();};
+$('mHybrid').onclick=function(){ST.robot.mode='idle';toast('وضع هجين 🔌','ok');save();};
+$('mCharge').onclick=function(){ST.robot.mode='charge';toast('شحن الآن 🔌','ok');save();};
+function renderWater(){var zones=[0,1,2,3,4,5].map(function(r){var ps=ST.plants.filter(function(p){return p.r===r;});var hum=Math.round(ps.reduce(function(a,p){return a+p.hum;},0)/ps.length);return{r:r,hum:hum};});
+$('zonesBox').innerHTML=zones.map(function(z){var low=z.hum<ST.set.hum;return '<div class="kp"><span class="ic">'+(low?'🟠':'')+'</span><b>'+z.hum+'%</b><span>منطقة '+(z.r+1)+'</span><div class="ac" style="margin-top:6px"><button class="bt ss xs" data-ir="'+z.r+'">💧 ري</button></div></div>';}).join('');
+$('autoChk').checked=ST.set.auto;}
+$('zonesBox').onclick=function(e){var b=e.target.closest('[data-ir]');if(!b)return;var r=+b.dataset.ir;ST.plants.filter(function(p){return p.r===r;}).forEach(function(p){p.hum=Math.min(80,p.hum+22);});toast('ري المنطقة '+(r+1)+' 💧','ok');renderWater();save();};
+$('autoChk').onchange=function(){ST.set.auto=this.checked;save();toast(this.checked?'ري تلقائي شغال 🤖':'ري تلقائي وقف','info');};
+$('btnSched').onclick=function(){ST.set.s1=$('sch1').value;ST.set.s2=$('sch2').value;save();toast('الجدول اتحفظ ⏰','ok');};
+function renderTasks(){$('taskList').innerHTML=ST.tasks.map(function(t){return '<div class="item"><div class="tt"><span class="chip2 '+(t.pr==='عالية'?'red':t.pr==='متوسطة'?'yel':'green')+'">'+t.pr+'</span> '+esc(t.txt)+'<span class="sp"></span><button class="bt '+(t.done?'gh':'gg')+' xs" data-td="'+t.id+'">'+(t.done?'↩ رجوع':'✓ تم')+'</button><button class="bt rd xs" data-tx="'+t.id+'">🗑</button></div></div>';}).join('')||'<p class="desc">مفيش مهام.</p>';}
+$('btnTaskAdd').onclick=function(){var t=$('taTxt').value.trim();if(!t){toast('اكتب المهمة','err');return;}ST.tasks.unshift({id:Date.now(),txt:t,pr:$('taPr').value,done:false});$('taTxt').value='';renderTasks();save();toast('مهمة اتضافت 📋','ok');};
+$('taskList').onclick=function(e){var td=e.target.closest('[data-td]'),tx=e.target.closest('[data-tx]');
+if(td){var t=ST.tasks.find(function(x){return x.id==td.dataset.td;});t.done=!t.done;}
+if(tx)ST.tasks=ST.tasks.filter(function(x){return x.id!=tx.dataset.tx;});
+renderTasks();save();};
+/* ================= 08) السوق ================= */
+function GC(g){return g==='درجة أولى'?'g1':g==='درجة ثانية'?'g2':g==='درجة ثالثة'?'g3':'gx';}
+function mLink(k,id){return base()+'?'+k+'='+id;}
+function susScore(){var tot=ST.ints.length*45||1;var saved=ST.ints.reduce(function(a,i){return a+(45-i.ml);},0);var pct=Math.round(saved/tot*100);var s=Math.min(100,Math.round(pct*.7+Math.min(1,(+($('susS')||{value:6}).value||6)/8)*30));return{pct:pct,score:s};}
+function renderMarket(){var M=ST.mkt;var sc=susScore();$('susP').value=sc.pct;
+$('mkList').innerHTML=M.lists.map(function(l){return '<div class="lcard"><div class="lim">'+(l.img?'<img src="'+l.img+'">':'🥬')+'</div><div class="lb"><div class="ac"><b>'+esc(l.title)+'</b><span class="gch '+GC(l.grade)+'">'+esc(l.grade)+'</span></div><div>⚖️'+l.qty+'كجم · 💰'+l.price+'ج · '+(l.status==='available'?'🟢 متاح':l.status==='hold'?'⏸ محجوز':'✅ مبيع')+'</div><div class="ac">'+(l.status==='available'?'<button class="bt oo xs" data-so="'+l.id+'">✅ بيع</button>':'<button class="bt gg xs" data-av="'+l.id+'">🟢</button>')+'<button class="bt gh xs" data-il="'+l.id+'">🔗</button><button class="bt rd xs" data-ld="'+l.id+'">🗑</button></div></div></div>';}).join('')||'<p class="desc">مفيش عروض.</p>';
+$('ofCount').textContent=M.offers.filter(function(o){return o.status==='new';}).length+' جديد';
+$('ofList').innerHTML=M.offers.map(function(o){var l=M.lists.find(function(x){return x.id===o.listingId;});return '<div class="item"><div class="tt">🧑 '+esc(o.buyer)+' · 💰'+fmt(o.price)+'ج × '+o.qty+' = <b>'+fmt(o.price*o.qty)+'ج</b> · 🌾'+esc(l?l.title:'—')+'<span class="sp"></span>'+(o.status==='new'?'<button class="bt gg xs" data-oa="'+o.id+'">قبول</button><button class="bt rd xs" data-or="'+o.id+'">رفض</button>':'<span class="chip2 '+(o.status==='acc'?'green':'red')+'">'+(o.status==='acc'?'مقبول':'مرفوض')+'</span>')+'</div></div>';}).join('')||'<p class="desc">مفيش عروض واردة.</p>';
+$('gbList').innerHTML=M.gb.map(function(g){var q=(g.joins||[]).reduce(function(a,x){return a+(+x.qty||0);},0);var pc=Math.min(100,Math.round(q/g.target*100));return '<div class="item"><div class="tt">'+esc(g.title)+' '+pc+'%<span class="sp"></span><button class="bt gh xs" data-gl="'+g.id+'">🔗</button><button class="bt rd xs" data-gd="'+g.id+'">🗑</button></div><div class="pbar"><i style="width:'+pc+'%"></i></div><div class="mm">👥'+(g.joins||[]).length+' · '+fmt(q)+'/'+fmt(g.target)+'كجم · '+g.price+'ج → <b>'+g.gp+'ج</b></div></div>';}).join('');
+$('auList').innerHTML=M.auc.map(function(a){var hi=(a.bids||[]).length?Math.max.apply(null,a.bids.map(function(b){return b.price;})):a.start;var live=Date.now()<a.end;return '<div class="item"><div class="tt">'+esc(a.title)+' '+(live?'<span class="chip2 red">🔴 شغال</span>':'<span class="chip2">⏹ انتهى</span>')+' · أعلى <b>'+fmt(hi)+'ج</b><span class="sp"></span><button class="bt gh xs" data-al="'+a.id+'">🔗</button>'+(live&&(a.bids||[]).length?'<button class="bt gg xs" data-aw="'+a.id+'">🏆</button>':'')+'<button class="bt rd xs" data-ad="'+a.id+'">🗑</button></div></div>';}).join('');
+$('loList').innerHTML=M.lots.map(function(l){return '<div class="item"><div class="tt">'+esc(l.code)+' · '+esc(l.crop)+' <span class="gch '+GC(l.grade)+'">'+esc(l.grade)+'</span><span class="sp"></span><button class="bt gg xs" data-cl="'+esc(l.code)+'">🔗 شهادة</button><button class="bt rd xs" data-od="'+esc(l.code)+'">🗑</button></div><div class="mm">🤖 '+esc(l.spray)+'</div></div>';}).join('');
+$('sbList').innerHTML=M.subs.map(function(s){return '<div class="item"><div class="tt">'+esc(s.name)+' · 👥'+(s.subs||[]).length+' · '+s.kg+'كجم × '+s.weeks+' = <b>'+fmt(s.price*s.weeks)+'ج</b><span class="sp"></span><button class="bt gh xs" data-sl="'+s.id+'">🔗</button><button class="bt rd xs" data-sd="'+s.id+'">🗑</button></div></div>';}).join('');
+var inn=0,out=0;M.wal.forEach(function(w){if(w.type==='in')inn+=w.amount;else out+=w.amount;});
+$('wKpis').innerHTML='<div class="kp"><span class="ic">📈</span><b>'+fmt(inn)+'</b><span>دخل</span></div><div class="kp"><span class="ic">📉</span><b>'+fmt(out)+'</b><span>مصروف</span></div><div class="kp"><span class="ic">💵</span><b>'+fmt(inn-out)+'</b><span>صافي</span></div>';
+$('wList').innerHTML='<table class="tbl"><tr><th>تاريخ</th><th>بيان</th><th>دخل</th><th>مصروف</th></tr>'+M.wal.slice(0,8).map(function(w){return '<tr><td>'+w.date+'</td><td>'+esc(w.note)+'</td><td style="color:#15803D;font-weight:800">'+(w.type==='in'?fmt(w.amount):'—')+'</td><td style="color:#B91C1C;font-weight:800">'+(w.type==='out'?fmt(w.amount):'—')+'</td></tr>';}).join('')+'</table>';
+$('susBadge').innerHTML='<span class="badge" style="background:'+(sc.score>=80?'linear-gradient(120deg,#FACC15,#F59E0B)':sc.score>=55?'linear-gradient(120deg,#16A34A,#A3E635)':'linear-gradient(120deg,#0EA5E9,#38BDF8)')+'">Score '+sc.score+'/100 · '+(sc.score>=80?'🏅 ذهبية':sc.score>=55?'🌿 خضراء':'💧 زرقاء')+'</span>';}
+$('mkBtn').onclick=function(){var t=$('mkT').value.trim(),q=+$('mkQ').value||0,p=+$('mkP').value||0,ph=$('mkPh').value.trim();if(!t||!q||!p||WP(ph).length<11){toast('كمّل بيانات العرض','err');return;}ST.mkt.lists.unshift({id:Date.now(),title:t,grade:$('mkG').value,qty:q,price:p,phone:ph,desc:$('mkD').value.trim(),img:'',status:'available'});save();renderMarket();toast('اتنشر 🛒','ok');};
+$('mkShop').onclick=function(){CP(mLink('shop',1),'لينك السوق 🛒');};
+$('gbBtn').onclick=function(){var t=$('gbT').value.trim(),tg=+$('gbTg').value||0,p=+$('gbP').value||0,gp=+$('gbGp').value||0;if(!t||!tg||!p||!gp){toast('كمّل الحملة','err');return;}ST.mkt.gb.unshift({id:Date.now(),title:t,target:tg,price:p,gp:gp,joins:[]});save();renderMarket();toast('حملة 🇨🇳','ok');};
+$('auBtn').onclick=function(){var t=$('auT').value.trim(),s=+$('auS').value||0,h=+$('auH').value||24;if(!t||!s){toast('كمّل المزاد','err');return;}ST.mkt.auc.unshift({id:Date.now(),title:t,grade:$('auG').value,start:s,end:Date.now()+h*3600e3,bids:[]});save();renderMarket();toast('مزاد 🇮🇳','ok');};
+$('loBtn').onclick=function(){var c=$('loC').value.trim();if(!c){toast('الكود','err');return;}var sp=$('loSp').value.trim();if(!sp){var n=ST.ints.length;var bio=ST.ints.filter(function(i){return i.ml===0;}).length;sp=n+' تدخل روبوت: '+bio+' بدون كيماوي + '+(n-bio)+' رش موضعي '+(ST.robot.spray)+'مل';}
+ST.mkt.lots=ST.mkt.lots.filter(function(x){return x.code!==c;});ST.mkt.lots.unshift({code:c,crop:$('loCr').value.trim(),grade:$('loG').value,date:$('loD').value,spray:sp});save();renderMarket();toast('شهادة 🇳🇱','ok');};
+$('sbBtn').onclick=function(){var n=$('sbN').value.trim(),k=+$('sbK').value||0,p=+$('sbP').value||0,w=+$('sbW').value||0;if(!n||!k||!p||!w){toast('كمّل الخطة','err');return;}ST.mkt.subs.unshift({id:Date.now(),name:n,kg:k,price:p,weeks:w,subs:[]});save();renderMarket();toast('خطة 🇺🇸','ok');};
+$('wBtn').onclick=function(){var a=+$('wA').value||0;if(!a){toast('المبلغ','err');return;}ST.mkt.wal.unshift({id:Date.now(),type:$('wT').value,amount:a,note:$('wN').value.trim()||'—',date:new Date().toISOString().slice(0,10)});save();renderMarket();toast('قيد 💰','ok');};
+$('susBtn').onclick=function(){renderMarket();toast('الشارة اتحسبت ⚡','ok');};
+$('sec-market').addEventListener('click',function(e){var M=ST.mkt;
+var il=e.target.closest('[data-il]'),so=e.target.closest('[data-so]'),av=e.target.closest('[data-av]'),ld=e.target.closest('[data-ld]'),oa=e.target.closest('[data-oa]'),or=e.target.closest('[data-or]'),gl=e.target.closest('[data-gl]'),gd=e.target.closest('[data-gd]'),al=e.target.closest('[data-al]'),ad=e.target.closest('[data-ad]'),aw=e.target.closest('[data-aw]'),cl=e.target.closest('[data-cl]'),od=e.target.closest('[data-od]'),sl=e.target.closest('[data-sl]'),sd=e.target.closest('[data-sd]');
+if(il)CP(mLink('item',il.dataset.il),'لينك السلعة 🔗');
+if(so){var l=M.lists.find(function(x){return x.id==so.dataset.so;});l.status='sold';M.wal.unshift({id:Date.now(),type:'in',amount:l.qty*l.price,note:'بيع: '+l.title,date:new Date().toISOString().slice(0,10)});toast('مبروك البيع 🎉','ok');}
+if(av){M.lists.find(function(x){return x.id==av.dataset.av;}).status='available';}
+if(ld)M.lists=M.lists.filter(function(x){return x.id!=ld.dataset.ld;});
+if(oa){var o=M.offers.find(function(x){return x.id==oa.dataset.oa;});o.status='acc';M.wal.unshift({id:Date.now(),type:'in',amount:o.price*o.qty,note:'عرض: '+o.buyer,date:new Date().toISOString().slice(0,10)});var ll=M.lists.find(function(x){return x.id===o.listingId;});if(ll)ll.status='sold';toast('قبول + دخل 💰','ok');}
+if(or){M.offers.find(function(x){return x.id==or.dataset.or;}).status='rej';}
+if(gl)CP(mLink('gb',gl.dataset.gl),'لينك الحملة 🔗');
+if(gd)M.gb=M.gb.filter(function(x){return x.id!=gd.dataset.gd;});
+if(al)CP(mLink('auc',al.dataset.al),'لينك المزاد 🔗');
+if(ad)M.auc=M.auc.filter(function(x){return x.id!=ad.dataset.ad;});
+if(aw){var a=M.auc.find(function(x){return x.id==aw.dataset.aw;});var hi=Math.max.apply(null,a.bids.map(function(b){return b.price;}));M.wal.unshift({id:Date.now(),type:'in',amount:hi*100,note:'مزاد: '+a.title,date:new Date().toISOString().slice(0,10)});a.end=Date.now();toast('بيع بالمزاد 🏆','ok');}
+if(cl)CP(mLink('cert',cl.dataset.cl),'لينك الشهادة 🔗');
+if(od)M.lots=M.lots.filter(function(x){return x.code!==od.dataset.od;});
+if(sl)CP(mLink('sub',sl.dataset.sl),'لينك الاشتراك 🔗');
+if(sd)M.subs=M.subs.filter(function(x){return x.id!=sd.dataset.sd;});
+save();renderMarket();});
+/* ================= 09) التقارير ================= */
+var rpP='d';
+$$('.rp').forEach(function(b){b.onclick=function(){rpP=b.dataset.p;$$('.rp').forEach(function(x){x.className='bt gh xs rp';});b.className='bt ss xs rp';renderReports();};});
+function renderReports(){var days=rpP==='d'?1:rpP==='w'?7:90;var ints=ST.ints.filter(function(i){return Date.now()-i.t<days*86400e3;});
+var saved=ints.reduce(function(a,i){return a+(45-i.ml);},0);var pct=ints.length?Math.round(saved/(ints.length*45)*100):0;
+$('rpScan').textContent=fmt(ST.plants.length*days);$('rpAct').textContent=ints.length;$('rpSaved').textContent=fmt(saved);$('rpPct').textContent=pct+'%';
+bars($('chRep'),['إصابات','تدخلات','موفَّر/10'],[{c:'#EF4444',v:[ST.dets.length]},{c:'#0EA5E9',v:[ints.length]},{c:'#22C55E',v:[saved/10]}]);
+$('intTable').innerHTML='<table class="tbl"><tr><th>وقت</th><th>خلية</th><th>آفة</th><th>طريقة</th><th>مل</th></tr>'+ints.slice(0,10).map(function(i){return '<tr><td>'+new Date(i.t).toLocaleString('ar-EG')+'</td><td>'+i.cell+'</td><td>'+esc(i.pest)+'</td><td>'+esc(i.mode)+'</td><td>'+i.ml+'</td></tr>';}).join('')+'</table>';}
+$('btnCsv').onclick=function(){var rows=[['time','cell','pest','mode','ml']].concat(ST.ints.map(function(i){return [new Date(i.t).toISOString(),i.cell,i.pest,i.mode,i.ml];}));
+var csv='\uFEFF'+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+var b=new Blob([csv],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='interventions.csv';a.click();toast('CSV ⬇','ok');};
+$('btnPdf').onclick=function(){window.print();};
+$('btnCert').onclick=function(){openCert('SUM');};
+/* ================= 10) المساعد ================= */
+function answer(q){var R=ST.robot;var inf=ST.plants.filter(function(p){return p.st==='inf';}).length;var dry=ST.plants.filter(function(p){return p.hum<ST.set.hum;}).length;
+var sales=ST.mkt.wal.filter(function(w){return w.type==='in';}).reduce(function(a,w){return a+w.amount;},0);
+if(/بطاري|شحن/.test(q))return '🔋 البطارية '+Math.round(R.batt)+'% والشمس '+R.solar+'W. '+(R.batt<ST.set.batt?'محتاج شحن دلوقتي.':'الوضع تمام.');
+if(/إصاب|آف|حشر/.test(q))return '🐛 عندك '+inf+' إصابة نشطة و'+ST.dets.length+' سجل اكتشاف. أعلى ثقة: '+Math.max.apply(null,ST.dets.map(function(d){return d.conf;}))+'%.';
+if(/ري|رطوب|مياه/.test(q))return '💧 '+dry+' نبتة تحت حد الرطوبة ('+ST.set.hum+'%). '+(dry?'افتح مستشار الري واضغط ري للمناطق البرتقالي.':'الري تمام دلوقتي.');
+if(/مبيع|فلوس|دخل|سوق/.test(q))return '🛒 إجمالي مبيعاتك '+fmt(sales)+' ج وعندك '+ST.mkt.offers.filter(function(o){return o.status==='new';}).length+' عرض شراء جديد.';
+if(/فين|موقع|روبوت/.test(q))return '🤖 الروبوت في الصف '+(R.y+1)+' الخلية '+(R.x+1)+' ووضعُه: '+R.mode+'.';
+if(/وفرت|مبيد|شهاد/.test(q))return '🧪 وفرت '+fmt(ST.ints.reduce(function(a,i){return a+(45-i.ml);},0))+' مل مبيد — نسبة توفير '+susScore().pct+'%. الشهادة جاهزة في التقارير.';
+return '🌿 أقدر أجاوب عن: البطارية، الإصابات، الري، المبيعات، موقع الروبوت، وتوفير المبيد.';}
+function chat(q){var b=$('chatBox');b.innerHTML+='<div class="msg user">'+esc(q)+'</div><div class="msg bot">'+esc(answer(q))+'</div>';b.scrollTop=b.scrollHeight;}
+$('chatSend').onclick=function(){var v=$('chatIn').value.trim();if(!v)return;chat(v);$('chatIn').value='';};
+$('chatIn').onkeydown=function(e){if(e.key==='Enter')$('chatSend').click();};
+$$('.cq').forEach(function(b){b.onclick=function(){chat(b.textContent.replace(/^[^\s]+\s/,''));};});
+/* ================= 11) الإعدادات والمستخدمين ================= */
+function renderSettings(){$('thHum').value=ST.set.hum;$('thConf').value=ST.set.conf;$('thTank').value=ST.set.tank;$('thBatt').value=ST.set.batt;$('mqttHost').value=ST.set.mqtt;$('mqttPort').value=ST.set.port;$('devToken').value=ST.set.token;$('sch1').value=ST.set.s1;$('sch2').value=ST.set.s2;
+$('usersBox').innerHTML='<table class="tbl"><tr><th>الاسم</th><th>الدور</th><th></th></tr>'+ST.users.map(function(u,i){return '<tr><td>'+esc(u.n)+'</td><td>'+esc(u.role)+'</td><td>'+(ST.session&&ST.session.role==='مدير'?'<button class="bt rd xs" data-ud="'+i+'">🗑</button>':'')+'</td></tr>';}).join('')+'</table>';}
+$('btnSaveSet').onclick=function(){ST.set.hum=+$('thHum').value;ST.set.conf=+$('thConf').value;ST.set.tank=+$('thTank').value;ST.set.batt=+$('thBatt').value;ST.set.mqtt=$('mqttHost').value;ST.set.port=$('mqttPort').value;ST.set.token=$('devToken').value;save();$('connChip').textContent='🟢 متصل — '+ST.set.mqtt;toast('الإعدادات اتحفظت 💾','ok');};
+$('btnExport').onclick=function(){var b=new Blob([JSON.stringify(ST)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='smart-shepherd-backup.json';a.click();toast('JSON ⬇','ok');};
+$('btnWipe').onclick=function(){if(confirm('تصفير كل البيانات المحلية؟')){localStorage.removeItem('ss_state');location.reload();}};
+$('btnAddUser').onclick=function(){var n=prompt('اسم المستخدم:');if(!n)return;var r=prompt('الدور (مزارع/فني/مدير):','مزارع')||'مزارع';ST.users.push({n:n,role:r});save();renderSettings();toast('مستخدم اتضاف 👥','ok');};
+$('usersBox').onclick=function(e){var b=e.target.closest('[data-ud]');if(!b)return;ST.users.splice(+b.dataset.ud,1);save();renderSettings();};
+/* ================= 12) التنبيهات والجولة والثيم ================= */
+$('bellBtn').onclick=function(){$('alertPanel').classList.toggle('hidden');renderAlerts();};
+$('alClose').onclick=function(){$('alertPanel').classList.add('hidden');};
+$('alAll').onclick=function(){ST.alerts.forEach(function(a){a.read=true;});save();renderAlerts();renderVisible();};
+function renderAlerts(){$('alertList').innerHTML=ST.alerts.map(function(a){return '<div class="item" style="'+(a.read?'opacity:.6':'')+'"><div class="tt">'+(a.lvl==='حرجة'?'🔴':a.lvl==='تحذير'?'🟠':'')+' '+esc(a.msg)+'<span class="sp"></span><button class="bt gh xs" data-as="'+a.sec+'" data-ai="'+a.id+'">👁</button></div><div class="mm">'+new Date(a.t).toLocaleString('ar-EG')+'</div></div>';}).join('')||'<p class="desc">مفيش تنبيهات.</p>';}
+$('alertList').onclick=function(e){var b=e.target.closest('[data-as]');if(!b)return;var a=ST.alerts.find(function(x){return x.id==b.dataset.ai;});if(a)a.read=true;save();$('alertPanel').classList.add('hidden');showSec(b.dataset.as);renderVisible();};
+var TOUR=[['dash','🏠 لوحة التحكم','كل مؤشرات حقلك في مكان واحد — اضغط أي مؤشر ينتقلك لتفاصيله.'],['map','🗺️ الخريطة','كل مربع نبتة: اضغطها تشوف حالتها وترشها أو تبعت الروبوت.'],['robot','🤖 الروبوت','كاميرا حية وأوامر تحكم وسجل مباشر — جرب زر مسح.'],['market','🛒 البيع','انشر عروضك ومزاداتك وشهادات QR اللي بتسجل تدخلات الروبوت الحقيقية.'],['reports','📊 التقارير','ولّد تقرير يومي/أسبوعي/موسمي واطبع شهادة المتبقيات.'],['settings','⚙️ الإعدادات','ظبط حدود التشغيل والري التلقائي والمستخدمين.']];
+var ti=0;
+function tourShow(){if(ti>=TOUR.length){$('tourWrap').classList.add('hidden');ST.tourDone=true;save();return;}
+$('tourWrap').classList.remove('hidden');$('tourT').textContent=TOUR[ti][1];$('tourP').textContent=TOUR[ti][2];$('tourI').textContent=(ti+1)+'/'+TOUR.length;showSec(TOUR[ti][0]);}
+$('tourNext').onclick=function(){ti++;tourShow();};
+$('tourSkip').onclick=function(){ti=TOUR.length;tourShow();};
+$('btnTour').onclick=function(){ti=0;tourShow();};
+$('btnTheme').onclick=function(){ST.set.theme=ST.set.theme==='dark'?'light':'dark';document.body.dataset.theme=ST.set.theme;save();};
+/* ================= 13) الصفحات العامة للمشتري ================= */
+function openCert(code){var M=ST.mkt;var body='';
+if(code==='SUM'){var saved=ST.ints.reduce(function(a,i){return a+(45-i.ml);},0);var pct=ST.ints.length?Math.round(saved/(ST.ints.length*45)*100):0;
+body='<table class="tbl"><tr><th>المنشأة</th><td>مزرعة الراعي الذكي — النوبارية</td></tr><tr><th>إجمالي التدخلات</th><td>'+ST.ints.length+'</td></tr><tr><th>مبيد موفَّر</th><td>'+fmt(saved)+' مل ('+pct+'%)</td></tr><tr><th>تدخلات بدون كيماوي</th><td>'+ST.ints.filter(function(i){return i.ml===0;}).length+'</td></tr><tr><th>التحقق</th><td>✅ مسجل بسجل الروبوت SS-01</td></tr></table>';}
+else{var l=M.lots.find(function(x){return x.code===code;});if(!l){toast('الشهادة مش موجودة','err');return;}
+body='<table class="tbl"><tr><th>الكود</th><td>'+esc(l.code)+'</td></tr><tr><th>المحصول</th><td>'+esc(l.crop)+'</td></tr><tr><th>الدرجة</th><td>'+esc(l.grade)+'</td></tr><tr><th>الحصاد</th><td>'+esc(l.date)+'</td></tr><tr><th>تدخلات الروبوت</th><td>'+esc(l.spray)+'</td></tr></table>';}
+$('pubWrap').innerHTML='<div class="pub-hero"><h1>🛡 شهادة تتبّع رقمية</h1><p>موثقة بسجل الروبوت — امسح QR للتحقق</p></div><div class="pub-body"><div class="cd a-g">'+body+'<div style="text-align:center;margin-top:12px"><img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+encodeURIComponent(base()+'?cert='+code)+'" style="width:160px;height:160px;border-radius:14px;border:2px solid var(--ln);background:#fff"></div><div class="ac" style="justify-content:center;margin-top:12px"><button class="bt gg sm" onclick="window.print()">🖨 طباعة</button><button class="bt gh sm" id="certX">✕ إغلاق</button></div></div></div>';
+$('pubWrap').classList.remove('hidden');$('certX').onclick=function(){$('pubWrap').classList.add('hidden');};}
+function openPub(mode,id){sync(function(){var M=ST.mkt;var h='<div class="pub-hero">';var body='';
+if(mode==='shop'){h+='<h1>🛒 سوق أخضر</h1><p>منتجات مصرية بالدرجات — كلم البائع واتساب أو ابعت عرض سعر</p></div><div class="pub-body"><div class="shopgrid">'+M.lists.filter(function(l){return l.status==='available';}).map(function(l){return '<div class="lcard"><div class="lim">'+(l.img?'<img src="'+l.img+'">':'🥬')+'</div><div class="lb"><div class="ac"><b>'+esc(l.title)+'</b><span class="gch '+GC(l.grade)+'">'+esc(l.grade)+'</span></div><div>⚖️'+l.qty+'كجم · 💰'+l.price+'ج/كجم</div><a class="bt gg sm" style="justify-content:center" target="_blank" href="https://wa.me/'+WP(l.phone)+'?text='+encodeURIComponent('عايز: '+l.title)+'">🟢 واتساب</a><input class="inp" placeholder="اسمك" id="ob'+l.id+'"><input class="inp" placeholder="رقمك" dir="ltr" id="op'+l.id+'"><div class="ac"><input class="inp" type="number" placeholder="سعرك" id="or'+l.id+'"><input class="inp" type="number" placeholder="كمية" id="oq'+l.id+'"></div><button class="bt ss sm" style="justify-content:center" data-os="'+l.id+'">🤝 عرض سعر</button></div></div>';}).join('')+'</div></div>';}
+else if(mode==='item'){var l=M.lists.find(function(x){return x.id==id;});h+='<h1>'+esc(l?l.title:'مش موجود')+'</h1><p>'+(l?esc(l.grade)+' · '+l.qty+'كجم · '+l.price+'ج/كجم':'')+'</p></div><div class="pub-body">'+(l?'<div class="cd a-k"><p style="font-weight:700">'+esc(l.desc)+'</p><a class="bt gg" style="justify-content:center;width:100%" target="_blank" href="https://wa.me/'+WP(l.phone)+'?text='+encodeURIComponent('عايز: '+l.title)+'">🟢 اطلب واتساب</a></div>':'')+'</div>';}
+else if(mode==='gb'){var g=M.gb.find(function(x){return x.id==id;});var q=(g&&g.joins||[]).reduce(function(a,x){return a+(+x.qty||0);},0);var pc=g?Math.min(100,Math.round(q/g.target*100)):0;
+h+='<h1>🇨🇳 شراء جماعي</h1><p>'+(g?esc(g.title)+' — السعر ينزل لـ '+g.gp+'ج لما الهدف يكمل':'مش موجود')+'</p></div><div class="pub-body">'+(g?'<div class="cd a-k"><div class="pbar"><i style="width:'+pc+'%"></i></div><div style="font-weight:800">'+pc+'% · '+fmt(q)+'/'+fmt(g.target)+'كجم</div><input class="inp" placeholder="اسمك" id="pjN" style="margin-top:8px"><input class="inp" placeholder="رقمك" dir="ltr" id="pjP" style="margin-top:6px"><input class="inp" type="number" placeholder="كمية كجم" id="pjQ" style="margin-top:6px"><button class="bt pk" style="width:100%;justify-content:center;margin-top:8px" id="pjB">🤝 انضم</button></div>':'')+'</div>';}
+else if(mode==='auc'){var a=M.auc.find(function(x){return x.id==id;});var hi=a&&(a.bids||[]).length?Math.max.apply(null,a.bids.map(function(b){return b.price;})):a?a.start:0;var live=a&&Date.now()<a.end;
+h+='<h1>🇮🇳 مزاد علني</h1><p>'+(a?esc(a.title)+' · أعلى '+fmt(hi)+'ج · '+(live?'🔴 شغال':'⏹ انتهى'):'مش موجود')+'</p></div><div class="pub-body">'+(a&&live?'<div class="cd a-o"><input class="inp" placeholder="اسمك/شركتك" id="abN"><input class="inp" placeholder="رقمك" dir="ltr" id="abP" style="margin-top:6px"><input class="inp" type="number" placeholder="مزايدتك ج/كجم" id="abV" style="margin-top:6px"><button class="bt oo" style="width:100%;justify-content:center;margin-top:8px" id="abB">⚡ زايد</button></div>':'')+'</div>';}
+else if(mode==='cert'){h+='<h1>🛡 شهادة تتبّع</h1><p>كود: '+esc(id)+'</p></div><div class="pub-body"></div>';openCert(id);return;}
+else if(mode==='sub'){var s=M.subs.find(function(x){return x.id==id;});h+='<h1>🇺🇸 اشتراك صندوق</h1><p>'+(s?esc(s.name)+' · '+s.kg+'كجم/أسبوع × '+s.weeks+' = '+fmt(s.price*s.weeks)+'ج':'مش موجود')+'</p></div><div class="pub-body">'+(s?'<div class="cd a-s"><input class="inp" placeholder="اسمك" id="sjN"><input class="inp" placeholder="رقمك" dir="ltr" id="sjP" style="margin-top:6px"><input class="inp" placeholder="العنوان" id="sjA" style="margin-top:6px"><button class="bt ss" style="width:100%;justify-content:center;margin-top:8px" id="sjB">📦 اشترك</button></div>':'')+'</div>';}
+h+='<div style="text-align:center;padding:14px"><button class="bt gh sm" id="pubX">✕ إغلاق</button></div>';
+$('pubWrap').innerHTML=h;$('pubWrap').classList.remove('hidden');
+$('pubX').onclick=function(){$('pubWrap').classList.add('hidden');};
+var os=$('pubWrap').querySelector('[data-os]');if(os)os.onclick=function(){var lid=os.dataset.os;var n=$('ob'+lid).value.trim(),p=$('op'+lid).value.trim(),r=+$('or'+lid).value||0,q=+$('oq'+lid).value||0;if(!n||!p||!r||!q){toast('كمّل البيانات','err');return;}M.offers.unshift({id:Date.now(),listingId:+lid,buyer:n,phone:p,price:r,qty:q,t:Date.now(),status:'new'});save();toast('عرضك وصل 🤝','ok');};
+var pjB=$('pjB');if(pjB)pjB.onclick=function(){var n=$('pjN').value.trim(),p=$('pjP').value.trim(),q=+$('pjQ').value||0;if(!n||!p||!q){toast('كمّل','err');return;}g.joins.push({n:n,p:p,qty:q});save();toast('انضممت 🤝','ok');openPub('gb',id);};
+var abB=$('abB');if(abB)abB.onclick=function(){var n=$('abN').value.trim(),p=$('abP').value.trim(),v=+$('abV').value||0;if(!n||!p||!v){toast('كمّل','err');return;}a.bids.push({n:n,p:p,price:v,t:Date.now()});save();toast('مزايدتك ⚡','ok');openPub('auc',id);};
+var sjB=$('sjB');if(sjB)sjB.onclick=function(){var n=$('sjN').value.trim(),p=$('sjP').value.trim();if(!n||!p){toast('كمّل','err');return;}s.subs.push({n:n,p:p,a:$('sjA').value.trim()});save();toast('اشتراكك 📦','ok');openPub('sub',id);};});}
+/* ================= 14) الدخول والإقلاع ================= */
+var topA=document.createElement('a');topA.className='tbtn';topA.href=SURVEY_URL;topA.textContent='📝';topA.title='تطبيق الاستبيان';topA.style.textDecoration='none';
+document.querySelector('.topbar').insertBefore(topA,$('bellBtn'));
+$('lgBtn').onclick=function(){if($('lgPass').value!=='1234'){toast('كلمة المرور غلط — جرب 1234','err');return;}
+var u=$('lgUser').value;ST.session={n:u.split('—')[0].trim(),role:u.split('—')[1]?u.split('—')[1].trim():'مزارع'};save();
+$('loginWrap').classList.add('hidden');$('app').classList.remove('hidden');document.body.dataset.theme=ST.set.theme;
+if(!ST.tourDone){ti=0;tourShow();}renderVisible();toast('أهلاً '+ST.session.n+' 🌿','ok');};
+var qs=new URLSearchParams(location.search);
+var pm=qs.get('shop')?'shop':qs.get('item')?'item':qs.get('gb')?'gb':qs.get('auc')?'auc':qs.get('cert')?'cert':qs.get('sub')?'sub':null;
+if(pm){$('loginWrap').classList.add('hidden');$('app').classList.add('hidden');openPub(pm,qs.get(pm));}
+else if(ST.session){$('loginWrap').classList.add('hidden');$('app').classList.remove('hidden');document.body.dataset.theme=ST.set.theme;renderVisible();}
+setInterval(tick,2000);
+})();
+</script>
+</body>
+</html>
+<a href="capstone.html" style="position:fixed;bottom:18px;left:18px;z-index:999;background:linear-gradient(120deg,#0D9488,#14B8A6);color:#fff;padding:12px 16px;border-radius:16px;font:800 13px Cairo,sans-serif;text-decoration:none;box-shadow:0 10px 24px rgba(13,148,136,.4)">🤖 برج التحكم</a>
